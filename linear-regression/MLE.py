@@ -22,13 +22,13 @@ def linear_regression():
     B = Xbar.T*y
 
     W = A.I*B
-    print("w: ", W)
 
     # w_1 = W
     # w_0 = b
     w = np.asarray(W)[0][0]
     b = np.asarray(W)[1][0]
 
+    ## Drawning
     # first ele in X, last ele in X, the number of middle points
     x0 = np.linspace(np.asarray(X)[0][0], np.asarray(X)[X.shape[0]-1][0], 2) 
     y0 = w*x0 + b # traning line
@@ -59,8 +59,6 @@ def polynomial_regression(M_value):
     B = Xbar.T*y
 
     W = A.I*B
-    print("w: ", W)
-    print(Xbar)
 
     # w_0 is weight of 1
     # w_1 is weight of x
@@ -68,6 +66,7 @@ def polynomial_regression(M_value):
     # ....
     # w_k is weight of x^k
 
+    ## Drawning
     x0 = np.linspace(np.asarray(X)[0][0], np.asarray(X)[X.shape[0]-1][0], 60)
     y0 = 0 # traning line
 
@@ -75,12 +74,11 @@ def polynomial_regression(M_value):
         w_k = np.asarray(W)[k][0]
         y0 += w_k * np.power(x0, k)
     
-
     plt.plot(X, y, 'ro')     # data 
     plt.plot(x0, y0, 'b-')   # the fitting line
     plt.xlabel('x')
     plt.ylabel('y')
-    plt.title("M = 9", loc = 'left', color = "blue")
+    plt.title("M = 3", loc = 'left', color = "blue")
 
     plt.show()
 
@@ -88,7 +86,7 @@ def polynomial_regression(M_value):
 ############ Run ############
 def main():
     # linear_regression()
-    polynomial_regression(9)
+    polynomial_regression(4)
 
 main()
 
