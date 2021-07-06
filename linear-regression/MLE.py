@@ -1,3 +1,4 @@
+# Maximum Likelihood Estimation (MLE)
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -45,7 +46,7 @@ def linear_regression():
 # k is function degree of y ; n is the number of x
 
 def polynomial_regression(M_value):
-    M = M_value   # k = M -1
+    M = M_value   # k = M - 1
 
     one = np.ones((X.shape[0], 1))
     Xbar = np.concatenate((one, X), axis = 1)
@@ -79,6 +80,7 @@ def polynomial_regression(M_value):
     plt.plot(x0, y0, 'b-')   # the fitting line
     plt.xlabel('x')
     plt.ylabel('y')
+    plt.title("M = 0", loc = 'left', color = "blue")
 
     plt.show()
 
@@ -86,7 +88,7 @@ def polynomial_regression(M_value):
 ############ Run ############
 def main():
     # linear_regression()
-    polynomial_regression(4)
+    polynomial_regression(1)
 
 main()
 
