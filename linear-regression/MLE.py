@@ -48,11 +48,10 @@ def linear_regression():
 def polynomial_regression(M_value):
     M = M_value   # k = M - 1
 
-    one = np.ones((X.shape[0], 1))
-    Xbar = np.concatenate((one, X), axis = 1)
+    Xbar = np.ones(X.shape)
 
-    # already have 2 collumns [1, x]
-    for k in range(2, M):
+    # already have 2 collumns [1], need + [x x^2 ... x^k]
+    for k in range(1, M):
         X_k = np.power(X, k)
         Xbar = np.concatenate((Xbar, X_k), axis = 1)
 
@@ -61,6 +60,7 @@ def polynomial_regression(M_value):
 
     W = A.I*B
     print("w: ", W)
+    print(Xbar)
 
     # w_0 is weight of 1
     # w_1 is weight of x
@@ -80,7 +80,7 @@ def polynomial_regression(M_value):
     plt.plot(x0, y0, 'b-')   # the fitting line
     plt.xlabel('x')
     plt.ylabel('y')
-    plt.title("M = 0", loc = 'left', color = "blue")
+    plt.title("M = 9", loc = 'left', color = "blue")
 
     plt.show()
 
@@ -88,7 +88,7 @@ def polynomial_regression(M_value):
 ############ Run ############
 def main():
     # linear_regression()
-    polynomial_regression(1)
+    polynomial_regression(9)
 
 main()
 
