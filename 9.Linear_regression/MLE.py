@@ -78,7 +78,7 @@ def polynomial_regression(M_value):
     plt.plot(x0, y0, 'b-')   # the fitting line
     plt.xlabel('x')
     plt.ylabel('y')
-    plt.title("M = " + str(M), loc = 'left', color = "blue")
+    plt.title("M = " + str(M-1), loc = 'left', color = "blue")
 
     plt.show()
 

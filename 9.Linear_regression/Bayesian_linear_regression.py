@@ -9,14 +9,14 @@ y = np.matrix([100,90,80,60,60,55,60,65,70,70,75,76,78,79,90,99,99,100]).T
 
 def bayesian_linear_regression():
 
-    K = 5 # degree of polynomial tegression function
+    K = 5 # degree of polynomial regression function
     ############ Polynomial Regression ############
     # Φ = [[1 x ... x^k] [1 x ... x^k]2 ... [1 x ... x^k]n]
     # k is function degree of y ; n is the number of x
     def phi(X0):
         Φ = np.ones(X0.shape)
 
-        # already have 2 collumns [1], need + [x x^2 ... x^k]
+        # already has 1 collumn [1], need + [x x^2 ... x^k]
         for k in range(1, K+1):
             x_k = np.power(X0, k)
             Φ = np.concatenate((Φ, x_k), axis = 1)
@@ -56,14 +56,14 @@ def bayesian_linear_regression():
     ## Graph
     plt.plot(xlist, Y_bayesian_lr, 'r-', label="")
     plt.plot(xlist, Y_bayesian_lr_map, 'b-', label="MAP (m_n)")
-    plt.plot(X, y, 'k^') # => plot the data
+    plt.plot(X, y, 'k+') # => plot the data
 
     title = "M = " + str(K) + ", alpha = " + str(alpha) + ", sigma = " + str(sigma)
     plt.title(title, loc = 'left', color = "blue")
     plt.legend()
     plt.show()
 
-
+############ Run ############
 def main():
     bayesian_linear_regression()
 

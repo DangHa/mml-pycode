@@ -22,7 +22,7 @@ def map():
 
     Xbar = np.ones(X.shape)
 
-    # already have 2 collumns [1], need + [x x^2 ... x^k]
+    # already has 1 collumn [1], need + [x x^2 ... x^k]
     for k in range(1, M):
         X_k = np.power(X, k)
         Xbar = np.concatenate((Xbar, X_k), axis = 1)
@@ -59,7 +59,7 @@ def map():
     plt.plot(x1, y1, 'g--', label='MLE')
     plt.xlabel('x')
     plt.ylabel('y')
-    plt.title("M = " + str(M) + ", λ = " + str(λ), loc = 'left', color = "blue")
+    plt.title("M = " + str(M-1) + ", λ = " + str(λ), loc = 'left', color = "blue")
 
     plt.legend()
     plt.show()
