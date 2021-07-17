@@ -16,8 +16,6 @@ def gererating_data(number_point):
     plt.plot(x1, x2, 'k+', label='Original data')
     return x1,x2
 
-x1, x2 = gererating_data(number_of_data)
-
 ## Step 1: Mean subtraction
 ## Step 2: Standardization
 ### S1 + S2 = Data Nomalization (Normalizing Inputs)
@@ -34,9 +32,6 @@ def nomalization(x1, x2):
     plt.plot(x1, x2, 'b+', label='Nomalized data')
     return x1, x2
 
-x1, x2 = nomalization(x1, x2)
-X = np.matrix([x1, x2])
-
 ## Step 3: Eigendecomposition of the covariance matrix
 # compute the principal components (B) 
 # S = (1/N)*X*Xt - covariance matrix
@@ -51,13 +46,12 @@ def eigendecomposition_of_S(X):
     
     x_origin = [0,0]    # origin point
     y_origin = [0,0]    # origin point
+
     # [b1λ1[0], b2λ2[0]] = x of b1 and b2; [b1λ1[1], b2λ2[1]] = y of b1 and b2
     v = plt.quiver(x_origin, y_origin, [b1λ1[0,0], b2λ2[0,0]], [b1λ1[1,0], b2λ2[1,0]], color=['r'], width=0.005, scale=5)
     plt.quiverkey(v, .08, .23, .21, 'Eigenvectors', color='r', labelpos='E')
-    # plt.show()
+    
     return λ, B
-
-λ, B = eigendecomposition_of_S(X)
 
 ## Step 4: Projection 
 def projection():
@@ -82,11 +76,26 @@ def projection():
     Y_on_b_m = X_on_b_m*b_m[1,0]/b_m[0,0]
 
     plt.plot(X_on_b_m, Y_on_b_m, 'g.', label='Projection points')
-    return Z
+    return b_m, Z
 
-Z = projection()
+# Step 1 + Step 2: Nomalization
+x1, x2 = gererating_data(number_of_data)
 
+# Step 3: Eigendecomposition of the covariance matrix
+x1, x2 = nomalization(x1, x2)
+X = np.matrix([x1, x2])
+
+# Step 4: Projection
+λ, B = eigendecomposition_of_S(X)
+b_m, Z = projection()
+
+# X_star = b_m*b_m.T*X
+# plt.plot(X_star[0], X_star[1], 'y^')
+
+# Drawing
 plt.axis('equal')
 plt.grid(linestyle='--')
+plt.title("The number of points = " + str(number_of_data), loc = 'left', color = "blue")
+
 plt.legend(loc="lower left")
 plt.show()
