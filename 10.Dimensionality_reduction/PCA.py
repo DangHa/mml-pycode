@@ -1,8 +1,10 @@
 # Principal component analysis (PCA) with 2 dimensions
 import numpy as np
 import matplotlib.pyplot as plt
+# other instruction
+# http://www.math.union.edu/~jaureguj/PCA.pdf
 
-number_of_data = 30
+number_of_data = 50
 
 ## generating data
 def gererating_data(number_point):
@@ -10,7 +12,7 @@ def gererating_data(number_point):
 
     # y = a*x + b
     a = np.random.uniform(low=-2.0, high=2.0)
-    b = np.random.uniform(low=-2.0, high=2.0)
+    b = np.random.uniform(low=-3.0, high=3.0)
     x2 = a*x1 + b - x1[::-1]*2/3 
 
     plt.plot(x1, x2, 'k+', label='Original data')
@@ -54,7 +56,7 @@ def eigendecomposition_of_S(X):
     return λ, B
 
 ## Step 4: Projection 
-def projection():
+def projection(B, X):
     # get the highest λ with its respective eigenvector b
     b_m = B[:,0]
     if λ[0] < λ[1]:
@@ -63,34 +65,31 @@ def projection():
     # draw the line for projection
     plt.axline((0, 0), (b_m[0,0], b_m[1,0]), color='pink', linestyle='--')
 
-    # Z = Bt * X
+    # Z = Bt * X - Coordinate on the basis of b_m
     Z = b_m.T*X
 
-    # calculate (x,y) of each projection points on the line just draw above
-    X_on_b_m = []
-    for z in np.nditer(Z):
-        val = np.sqrt(z*z/(1+(b_m[1,0]*b_m[1,0])/(b_m[0,0]*b_m[0,0])))*z/np.absolute(z)
-        X_on_b_m.append(val)
-        
-    X_on_b_m = np.array(X_on_b_m)
-    Y_on_b_m = X_on_b_m*b_m[1,0]/b_m[0,0]
+    # projection of X with coordinates Z 
+    X_projection = b_m*Z
 
-    plt.plot(X_on_b_m, Y_on_b_m, 'g.', label='Projection points')
-    return b_m, Z
+    plt.plot(np.asarray(X_projection)[0,:], np.asarray(X_projection)[1,:], 'g.',  label='Projection points')
+    return b_m, Z, X_projection
 
-# Step 1 + Step 2: Nomalization
+# Preparing data
 x1, x2 = gererating_data(number_of_data)
 
-# Step 3: Eigendecomposition of the covariance matrix
+# Step 1 + Step 2: Nomalization
 x1, x2 = nomalization(x1, x2)
 X = np.matrix([x1, x2])
 
-# Step 4: Projection
+# Step 3: Eigendecomposition of the covariance matrix
 λ, B = eigendecomposition_of_S(X)
-b_m, Z = projection()
 
-# X_star = b_m*b_m.T*X
-# plt.plot(X_star[0], X_star[1], 'y^')
+# Step 4: Projection
+b_m, Z, X_projection = projection(B, X)
+
+# Average squared reconstruction error
+error_sum = np.power(X-X_projection, 2).sum()
+print("Average squared reconstruction error: " + str(error_sum))
 
 # Drawing
 plt.axis('equal')
