@@ -4,9 +4,36 @@ import matplotlib.pyplot as plt
 # other instruction
 # http://www.math.union.edu/~jaureguj/PCA.pdf
 
-import data_functions as df
-
 number_of_data = 50
+
+### generating data
+def gererating_data(number_point):
+    x1 = np.random.uniform(low=0.0, high=5.0, size=number_point)
+
+    # y = a*x + b
+    a = np.random.uniform(low=-2.0, high=2.0)
+    b = np.random.uniform(low=-3.0, high=3.0)
+    x2 = a*x1 + b - x1[::-1]*2/3 
+
+    plt.plot(x1, x2, 'k+', label='Original data')
+    return x1,x2
+
+### Step 1: Mean subtraction
+### Step 2: Standardization
+#### S1 + S2 = Data Nomalization (Normalizing Inputs)
+def nomalization(x1, x2):
+    mean_x1 = np.mean(x1)
+    std_x1 = np.std(x1)
+
+    mean_x2 = np.mean(x2)
+    std_x2 = np.std(x2)
+
+    x1 = (x1 - mean_x1)/(std_x1)
+    x2 = (x2 - mean_x2)/(std_x2)
+
+    plt.plot(x1, x2, 'b+', label='Nomalized data')
+    return x1, x2
+
 
 ### Step 3: Finding eigenvectors of the covariance matrix (Eigendecomposition)
 # compute the principal components (B) 
@@ -69,10 +96,10 @@ def projection(B, λ, X):
 ############ Run ############
 def main():
     # Preparing data
-    x1, x2 = df.gererating_data(number_of_data)
+    x1, x2 = gererating_data(number_of_data)
 
     # Step 1 + Step 2: Nomalization
-    x1, x2 = df.nomalization(x1, x2)
+    x1, x2 = nomalization(x1, x2)
     X = np.matrix([x1, x2])
     N = X.shape[0]*X.shape[1]
 
