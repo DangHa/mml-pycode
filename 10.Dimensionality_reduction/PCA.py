@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 number_of_data = 50
 
-## generating data
+### generating data
 def gererating_data(number_point):
     x1 = np.random.uniform(low=0.0, high=5.0, size=number_point)
 
@@ -18,9 +18,9 @@ def gererating_data(number_point):
     plt.plot(x1, x2, 'k+', label='Original data')
     return x1,x2
 
-## Step 1: Mean subtraction
-## Step 2: Standardization
-### S1 + S2 = Data Nomalization (Normalizing Inputs)
+### Step 1: Mean subtraction
+### Step 2: Standardization
+#### S1 + S2 = Data Nomalization (Normalizing Inputs)
 def nomalization(x1, x2):
     mean_x1 = np.mean(x1)
     std_x1 = np.std(x1)
@@ -34,7 +34,7 @@ def nomalization(x1, x2):
     plt.plot(x1, x2, 'b+', label='Nomalized data')
     return x1, x2
 
-## Step 3: Eigendecomposition of the covariance matrix
+### Step 3: Finding eigenvectors of the covariance matrix (Eigendecomposition)
 # compute the principal components (B) 
 # S = (1/N)*X*Xt - covariance matrix
 def eigendecomposition_of_S(X):
@@ -46,16 +46,34 @@ def eigendecomposition_of_S(X):
     b1λ1 = B[:,0]*λ[0]
     b2λ2 = B[:,1]*λ[1]
     
-    x_origin = [0,0]    # origin point
-    y_origin = [0,0]    # origin point
-
+    origin = [0,0]    # origin point
     # [b1λ1[0], b2λ2[0]] = x of b1 and b2; [b1λ1[1], b2λ2[1]] = y of b1 and b2
-    v = plt.quiver(x_origin, y_origin, [b1λ1[0,0], b2λ2[0,0]], [b1λ1[1,0], b2λ2[1,0]], color=['r'], width=0.005, scale=5)
+    v = plt.quiver(origin, origin, [b1λ1[0,0], b2λ2[0,0]], [b1λ1[1,0], b2λ2[1,0]], color=['r'], width=0.005, scale=5)
     plt.quiverkey(v, .08, .23, .21, 'Eigenvectors', color='r', labelpos='E')
     
     return λ, B
 
-## Step 4: Projection 
+# Using SVD
+# Eigenvectors of S is the U of X
+def SVD(X):
+    U, S, V = np.linalg.svd(X)
+
+    λ = np.power(S, 2)/X.shape[1]
+
+    # draw 2 eigenvectors*eigenvalues
+    b1λ1 = U[:,0]*λ[0]
+    b2λ2 = U[:,1]*λ[1]
+
+    origin = [0,0]    # origin point
+    # [b1λ1[0], b2λ2[0]] = x of b1 and b2; [b1λ1[1], b2λ2[1]] = y of b1 and b2
+    v = plt.quiver(origin, origin, [b1λ1[0,0], b2λ2[0,0]], [b1λ1[1,0], b2λ2[1,0]], color=['r'], width=0.005, scale=5)
+    plt.quiverkey(v, .08, .23, .21, 'Eigenvectors', color='r', labelpos='E')
+
+    return λ, U
+
+
+
+### Step 4: Projection 
 def projection(B, X):
     # get the highest λ with its respective eigenvector b
     b_m = B[:,0]
@@ -80,18 +98,20 @@ x1, x2 = gererating_data(number_of_data)
 # Step 1 + Step 2: Nomalization
 x1, x2 = nomalization(x1, x2)
 X = np.matrix([x1, x2])
+N = X.shape[0]*X.shape[1]
 
 # Step 3: Eigendecomposition of the covariance matrix
-λ, B = eigendecomposition_of_S(X)
+# λ, B = eigendecomposition_of_S(X)
+λ, B = SVD(X) # reduce time to calculate S - covariance matrix
 
 # Step 4: Projection
 b_m, Z, X_projection = projection(B, X)
 
 # Average squared reconstruction error
-error_sum = np.power(X-X_projection, 2).sum()
+error_sum = np.power(X-X_projection, 2).sum()/N
 print("Average squared reconstruction error: " + str(error_sum))
 
-# Drawing
+### Drawing
 plt.axis('equal')
 plt.grid(linestyle='--')
 plt.title("The number of points = " + str(number_of_data), loc = 'left', color = "blue")
