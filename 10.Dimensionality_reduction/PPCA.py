@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 # other instruction
-# http://edwardlib.org/tutorials/probabilistic-pca
+# https://www.youtube.com/watch?v=invkqcdSkco
 
 number_of_data = 150
 
