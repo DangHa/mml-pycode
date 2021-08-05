@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import torch
 from torch.distributions import Normal 
 
-number_of_point = 300
+number_of_point = 150
 K = 3
 
 ### generating data inside a circle
@@ -33,40 +33,85 @@ def gererating_data(size):
 
 X1,X2 = gererating_data(int(number_of_point/3))
 
-plt.plot(X1, X2, color='dimgrey', marker='o')
 
 ### Initialize u_k , Σ_k , π_k .
 u = np.random.rand(K, 2)
 Σ = np.array([[0.5, 0], [0, 0.5], [0.5, 0], [0, 0.5], [0.5, 0], [0, 0.5]])
 π = np.random.rand(1, K)
 
-## calculate responsbilities R nxk
-R = np.empty([number_of_point, K])
+### EM starting
+loop = 6
 
-for j in range(number_of_point):
-    X_i = np.matrix([X1[0,j], X2[0,j]])
+for l in range(loop):
+    ### E-step: calculate responsbilities R nxk
+    R = np.empty([number_of_point, K])
 
-    log_r11 = 0
-    for i in range(K):
-        u_i = np.asmatrix(u[i,:])
-        Σ_i = np.asmatrix(Σ[i*2:i*2+2,:])
-        π_i = π[0,0]
+    for j in range(number_of_point):
+        X_j = np.matrix([X1[0,j], X2[0,j]])
 
-        # 11.11 formulation in mml-book
-        log_1 = np.power(np.pi,0.5)
-        log_2 = np.power(np.linalg.det(Σ_i),0.5)
-        log_3 = np.exp(-0.5 * (X_i - u_i).reshape(1,2) * np.linalg.inv(Σ_i) * (X_i - u_i).reshape(2,1))
+        log_r11 = 0
+        for i in range(K):
+            u_i = np.asmatrix(u[i,:])
+            Σ_i = np.asmatrix(Σ[i*2:i*2+2,:])
+            π_i = π[0,0]
 
-        log_r11 = π_i * log_1 * log_2 * log_3[0,0]
+            # 11.11 formulation in mml-book
+            log_1 = np.power(np.pi,-0.5)
+            log_2 = np.power(np.linalg.det(Σ_i),-0.5)
+            log_3 = np.exp(-0.5 * (X_j - u_i).reshape(1,2) * np.linalg.inv(Σ_i) * (X_j - u_i).reshape(2,1))
 
-        R[j,i] = log_r11
+            log_r11 = π_i * log_1 * log_2 * log_3[0,0]
 
-    sum = np.sum(R[0,:])
-    for i in range(K):
-        R[j,i] = R[j,i]/sum
+            R[j,i] = log_r11
 
-print(R)
+        sum = np.sum(R[0,:])
+        for i in range(K):
+            R[j,i] = R[j,i]/sum
 
-############ Run ############
+    ### M-step: recalculate mean and variance
+
+    # mean
+    X = np.asmatrix(np.hstack((X1.T, X2.T)))
+
+    for k in range(K):
+        r_nk = R[:, k].reshape(number_of_point,1)
+        N_k = np.sum(r_nk)
+
+        u_k = r_nk.T*X/N_k
+
+        u[k,:] = u_k
+    print("u: ", u)
+
+    # covariance
+    for k in range(K):
+        r_nk = R[:, k].reshape(number_of_point,1)
+        N_k = np.sum(r_nk)
+
+        u_k = u[k, :].reshape(2,1)
+        
+        Σ_k_new = 0
+        for n in range(number_of_point):
+            x_n = X[n,:].T
+            Σ_k_new += r_nk[n,0]*(x_n - u_k)*(x_n - u_k).T
+        
+        Σ_k_new /= N_k
+
+        Σ[k*2:k*2+2,:] = Σ_k_new
+    print("Σ: ", Σ)
+
+    # weight
+    for k in range(K):
+        r_nk = R[:, k].reshape(number_of_point,1)
+        N_k = np.sum(r_nk)
+
+        π_k_new = N_k/number_of_point
+
+        π[0, k] = π_k_new
+    print("π: ", π)
+
+############ Visualization ############
+
+plt.plot(X1, X2, color='blue', marker='+')
+plt.plot(u[:,0], u[:,1], 'ro')
 plt.grid(linestyle='--')
 plt.show()
