@@ -15,16 +15,16 @@ K = 3
 ### generating data inside a circle
 def gererating_data(size):
     # First cluster
-    X11 = torch.empty(size).normal_(mean=5,std=0.5).numpy()
-    X12 = torch.empty(size).normal_(mean=2,std=0.5).numpy()
+    X11 = torch.empty(size).normal_(mean=10,std=2).numpy()
+    X12 = torch.empty(size).normal_(mean=4,std=1).numpy()
 
     # Second cluster
-    X21 = torch.empty(size).normal_(mean=-1,std=0.5).numpy()
-    X22 = torch.empty(size).normal_(mean=-1,std=0.5).numpy()
+    X21 = torch.empty(size).normal_(mean=-1,std=1).numpy()
+    X22 = torch.empty(size).normal_(mean=-4,std=2).numpy()
 
     # Third cluster
-    X31 = torch.empty(size).normal_(mean=-1,std=1).numpy()
-    X32 = torch.empty(size).normal_(mean=1.5,std=1).numpy()
+    X31 = torch.empty(size).normal_(mean=-1,std=2).numpy()
+    X32 = torch.empty(size).normal_(mean=2,std=2).numpy()
 
     X1 = np.concatenate((X11, X21, X31)).reshape(1, size*3)
     X2 = np.concatenate((X12, X22, X32)).reshape(1, size*3)
@@ -33,14 +33,13 @@ def gererating_data(size):
 
 X1,X2 = gererating_data(int(number_of_point/3))
 
-
 ### Initialize u_k , Σ_k , π_k .
 u = np.random.rand(K, 2)
 Σ = np.array([[0.5, 0], [0, 0.5], [0.5, 0], [0, 0.5], [0.5, 0], [0, 0.5]])
 π = np.random.rand(1, K)
 
 ### EM starting
-loop = 6
+loop = 5
 
 for l in range(loop):
     ### E-step: calculate responsbilities R nxk
@@ -56,6 +55,7 @@ for l in range(loop):
             π_i = π[0,0]
 
             # 11.11 formulation in mml-book
+            # it's hard to keep Σ_i invertible
             log_1 = np.power(np.pi,-0.5)
             log_2 = np.power(np.linalg.det(Σ_i),-0.5)
             log_3 = np.exp(-0.5 * (X_j - u_i).reshape(1,2) * np.linalg.inv(Σ_i) * (X_j - u_i).reshape(2,1))
@@ -110,8 +110,8 @@ for l in range(loop):
     print("π: ", π)
 
 ############ Visualization ############
-
 plt.plot(X1, X2, color='blue', marker='+')
 plt.plot(u[:,0], u[:,1], 'ro')
+
 plt.grid(linestyle='--')
 plt.show()
